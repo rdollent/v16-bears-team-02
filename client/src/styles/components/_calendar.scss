@@ -1,0 +1,35 @@
+#calendar {
+    margin: 20px auto;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+#calendar td, #calendar th {
+    margin: 0 auto;
+    border: 1px solid black;
+    padding: 1rem;
+}
+
+
+
+#weekdays, #month-year-header {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+#weekdays > :first-child {
+    color: red;
+}
+
+.current-selection {
+    background-color: #ffe234;
+}
+
+#prev-month, #next-month {
+  padding: 0.75rem 2rem;
+  background-color: #fff;
+  box-shadow: none;
+  text-shadow: none;
+  border: 1px solid black;
+  margin: 0 10px;
+}
