@@ -189,7 +189,7 @@ class Week extends React.Component {
                         
                     </tbody>
                </table>
-               <button>Submit</button>
+               <button id='submit'>Submit</button>
             </div>
         )
     }
