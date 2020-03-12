@@ -10,6 +10,36 @@
     background-color: red;
 }
 
-#copy td:not(.week-times) {
+#week td:not(.week-times) {
     user-select: none;
+}
+
+#week {
+    margin: 0 auto;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+#week td, #week th {
+    margin: 0 auto;
+    border: 1px solid black;
+    padding: 0.5rem;
+}
+
+.week-times {
+    width: 1.5rem;
+}
+
+.times {
+    text-align: right;
+}
+
+#submit {
+    padding: 0.75rem 2rem;
+    background-color: #fff;
+    box-shadow: none;
+    text-shadow: none;
+    border: 1px solid black;
+    margin: 20px;
+
 }

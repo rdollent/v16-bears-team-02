@@ -8,7 +8,6 @@ const merge = require('deepmerge');
 class Week extends React.Component {
     constructor(props) {
         super(props);
-        // this.getCurrentWeek = this.getCurrentWeek.bind(this);
         this.getCurrentMonth = getCurrentMonth.bind(this);
         this.getCurrentYear = getCurrentYear.bind(this);
         this.getCurrentDate = getCurrentDate.bind(this);
@@ -17,8 +16,6 @@ class Week extends React.Component {
         this.getNumberOfWeeks = getNumberOfWeeks.bind(this);
         this.createWeek = createWeek.bind(this);
         this.populateDays = populateDays.bind(this);
-        // this.populateWeek = this.populateWeek.bind(this);
-        // this.populateTimes = this.populateTimes.bind(this);
         this.state = {
             isMouseDown: 0,
             availability: {}
@@ -54,13 +51,13 @@ class Week extends React.Component {
         return a;
     }
 
-    populateTimes =() => {
+    populateTimes = () => {
         const format = ['AM', 'PM'];
         const times = [12,1,2,3,4,5,6,7,8,9,10,11];
         const timeList = (format.map((meridiem) => { return times.map((hour) => { return `${hour} ${meridiem}`})})).flat();
         let week = this.getCurrentWeek();
         let timeSlots = timeList.map((t) => {
-            let slot = React.createElement('td', {}, t);
+            let slot = React.createElement('td', {className: 'times'}, t);
             return React.createElement(
                 'tr', {}, 
                 [
@@ -172,11 +169,11 @@ class Week extends React.Component {
 
     render() {
         return (
-            <div id="week"> 
-               <table>
+            <div id='container-week'> 
+               <table id="week">
                     <thead>
                         <tr>
-                            <th colSpan='7'>
+                            <th colSpan='8'>
                                 Week
                             </th>
                         </tr>
@@ -189,9 +186,10 @@ class Week extends React.Component {
                         </tr>
                         {this.populateWeek()}
                         {this.populateTimes()}
-                        <button>Submit</button>
+                        
                     </tbody>
                </table>
+               <button id='submit'>Submit</button>
             </div>
         )
     }

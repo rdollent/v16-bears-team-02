@@ -16,11 +16,7 @@ class Calendar extends React.Component {
         this.getFirstDay = getFirstDay.bind(this);
         this.getLastFullDate = getLastFullDate.bind(this);
         this.getNumberOfWeeks = getNumberOfWeeks.bind(this);
-        this.populateDates = this.populateDates.bind(this);
         this.populateDays = populateDays.bind(this);
-        this.prevMonth = this.prevMonth.bind(this);
-        this.nextMonth = this.nextMonth.bind(this);
-        this.getParentData = this.getParentData.bind(this);
         this.createWeek = createWeek.bind(this);
         this.months = [
             'January', 'February', 'March', 'April',
@@ -42,17 +38,19 @@ class Calendar extends React.Component {
         }
     }
 
-    populateDates() {
+    populateDates = () => {
         console.log('populateDates');
         const allWeeks = this.createWeek();
-        const lastDate = (this.getLastFullDate()).getDate();
-        const firstDay = this.getFirstDay();
         const allWeeksElem = allWeeks.map((week, index) => {
             return React.createElement('tr', {id: `week-${index}`, 'data-weeknumber': index}, 
                 week.map((day, ind) => {
-                    // if(day >= firstDay && day <= firstDay + lastDate && day !== '') {
                     if(day !== '') {
-                        return React.createElement('td', {key: `td-${ind}`, onClick: this.getParentData},day)
+                        if(day === this.props.currentDate) {
+                            return React.createElement('td', {key: `td-${ind}`, onClick: this.getParentData, className: 'current-selection'},day)
+                        } else {
+                            return React.createElement('td', {key: `td-${ind}`, onClick: this.getParentData},day)
+                        }
+                        
                     } else {
                         return React.createElement('td', {key: `td-${ind}`}, day)
                     }
@@ -60,13 +58,13 @@ class Calendar extends React.Component {
                 })
             );
 
-        })
+        });
         return allWeeksElem;
     }
 
     
     //next month and previous month
-    prevMonth() {
+    prevMonth = () => {
         console.log('prevMonth');
         let month = this.props.currentMonth;
         let year = this.props.currentYear;
@@ -91,7 +89,7 @@ class Calendar extends React.Component {
         
     }
 
-    nextMonth() {
+    nextMonth = () => {
         console.log('nextMonth');
         let month = this.props.currentMonth;
         let year = this.props.currentYear;
@@ -113,7 +111,7 @@ class Calendar extends React.Component {
         this.props.storeCurrentMonthToState(month);
     }
 
-    getLastDate(month) {
+    getLastDate = (month) => {
         // if previous month's last date > this month's last date
         // e.g. May 31st to April 30th
         let nextMonth = month + 1;
@@ -139,7 +137,7 @@ class Calendar extends React.Component {
     }
 
     // pass ref property to tr (parent node of date)
-    getParentData(e) {
+    getParentData = (e) => {
         const parentId = e.currentTarget.parentNode.id;
         const date = parseInt(e.currentTarget.innerText);
         this.props.storeCurrentWeekToState(parentId);
@@ -149,12 +147,12 @@ class Calendar extends React.Component {
 
     render() {
         return (
-            <div>
+            <div id='container-calendar'>
                 <button id='prev-month' onClick={this.prevMonth}>Prev</button>
                 <button id='next-month' onClick={this.nextMonth}>Next</button>
                 <table id='calendar'>
                     <thead>
-                        <tr>
+                        <tr id='month-year-header'>
                             <th colSpan='7'>
                                 {this.months[this.props.currentMonth]} {this.props.currentYear}
                             </th>
