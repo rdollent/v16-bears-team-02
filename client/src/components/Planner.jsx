@@ -19,9 +19,7 @@ class Planner extends React.Component {
     render() {
         return (
             <div id='planner'>
-                {/* <Calendar ref={this.childRef}/> */}
                 <Calendar />
-                {/* <Week ref={this.weekRef}/> */}
                 <Week />
             </div>
 

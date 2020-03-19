@@ -1,5 +1,6 @@
 'use strict';
 const Meeting = require('./Meeting')
+const WhenAvailable = require('./whenavailable')
 
 module.exports = (sequelize, DataTypes) => {
   const Participant = sequelize.define('Participant', {
@@ -15,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
   Participant.associate = function (models) {
     //associations can be defined here
     Participant.belongsTo(models.Meeting)
+    Participant.hasMany(models.WhenAvailable)
   }
   return Participant;
 }
