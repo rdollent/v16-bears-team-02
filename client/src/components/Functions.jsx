@@ -58,9 +58,9 @@ export const getLastFullDate = function() {
 
 // get first day of the month
 export const getFirstDay = function() {
-    console.log('getFirstDay');
-    let month = this.getCurrentMonth() + 1;
-    let currentYear = this.getCurrentYear();
+    console.log('getFirstDay', this.props.currentMonth);
+    let month = (this.props.currentMonth || this.getCurrentMonth()) + 1;
+    let currentYear = this.props.currentYear || this.getCurrentYear();
     let firstDate = (new Date(`${month}/1/${currentYear}`));
     let firstDay = firstDate.getDay();
     return firstDay;
@@ -121,7 +121,6 @@ export const createWeek = function() {
         allWeeks.push(elem);
         dateCount+=7;
     }
-    console.log(allWeeks);
     return allWeeks;
 
 }

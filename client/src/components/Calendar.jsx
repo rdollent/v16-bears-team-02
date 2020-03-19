@@ -23,24 +23,22 @@ class Calendar extends React.Component {
             'May', 'June', 'July', 'August', 'September',
             'October', 'November', 'December'
         ];
-        
-    }
-
-    componentDidMount() {
+        this.createdWeek = this.createWeek();
         if(this.props.currentMonth === null && this.props.currentYear === null && this.props.currentDate === null) {
             this.getCurrentMonth();
             this.getCurrentYear();
             this.getCurrentDate();
-            this.getLastFullDate();
-            this.getNumberOfWeeks();
-            this.populateDates();
-            this.createWeek();
         }
+        
+    }
+
+    componentDidMount() {
+        
     }
 
     populateDates = () => {
         console.log('populateDates');
-        const allWeeks = this.createWeek();
+        const allWeeks = this.createdWeek;
         const allWeeksElem = allWeeks.map((week, index) => {
             return React.createElement('tr', {id: `week-${index}`, 'data-weeknumber': index}, 
                 week.map((day, ind) => {
@@ -146,6 +144,8 @@ class Calendar extends React.Component {
     }
 
     render() {
+        console.log('calendar render');
+        this.createdWeek = this.createWeek();
         return (
             <div id='container-calendar'>
                 <button id='prev-month' onClick={this.prevMonth}>Prev</button>

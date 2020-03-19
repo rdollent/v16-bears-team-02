@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { storeCurrentWeek } from '../actions/calendarActions';
+// import { storeCurrentWeek } from '../actions/calendarActions';
 import { getCurrentMonth, getCurrentYear, getCurrentDate, getFirstDay, getLastFullDate, getNumberOfWeeks, createWeek, populateDays } from './Functions';
 const merge = require('deepmerge');
 
@@ -20,17 +20,19 @@ class Week extends React.Component {
             isMouseDown: 0,
             availability: {}
         };
+
+        this.createdWeek = this.createWeek();
     }
 
     componentDidMount() {
-        this.populateWeek();
+        // this.populateWeek();
         this.attachEvents();
     }
 
     getCurrentWeek = () => {
         console.log('getCurrentWeek');
         const currentDate = this.props.currentDate || (new Date()).getDate();
-        const allWeeks = this.createWeek();
+        const allWeeks = this.createdWeek;
         let week = allWeeks.find((arr) => {
             return arr === (arr.find((d) => {
                 return d === currentDate
@@ -46,7 +48,7 @@ class Week extends React.Component {
         let a = React.createElement('tr', {colSpan: '7'}, 
             React.createElement('td', {}, 'Times'),
             week.map((day, index) => {
-            return React.createElement('td', {className: `${this.props.currentMonth}-${day}`}, day)
+            return React.createElement('td', {className: `${this.props.currentMonth}-${day}`, key: `${this.props.currentMonth}-${day}`}, day)
         }));
         return a;
     }
@@ -57,9 +59,9 @@ class Week extends React.Component {
         const timeList = (format.map((meridiem) => { return times.map((hour) => { return `${hour} ${meridiem}`})})).flat();
         let week = this.getCurrentWeek();
         let timeSlots = timeList.map((t) => {
-            let slot = React.createElement('td', {className: 'times'}, t);
+            let slot = React.createElement('td', {className: 'times', key: t}, t);
             return React.createElement(
-                'tr', {}, 
+                'tr', {key: `week-time-slots-${t}`}, 
                 [
                     slot, 
                     week.map((l) => React.createElement(
@@ -67,79 +69,69 @@ class Week extends React.Component {
                         {   className:'week-times', 
                             'data-date': l, 
                             'data-time': t,
-                        }, 
-                        React.createElement('span', {}, '')))
+                            onMouseDown: this.mouseDown,
+                            onMouseEnter: this.mouseEnter,
+                            key: `${this.props.currentMonth}-${l}-${t}`
+                        }
+                        , 
+                        // React.createElement('span', {}, '')
+                        ''
+                        ))
                 ]
                 );
         });
-    
         return timeSlots;
     }
 
-    attachEvents = () => {
-        let weekTimes = document.getElementsByClassName('week-times');
-
-        Array.from(weekTimes).forEach((element) => {
-            element.addEventListener('mousedown', (e) => {
-                let selectedDate = e.currentTarget.dataset.date;
-                let selectedTime = [e.currentTarget.dataset.time];
-                let selectedMonth = this.props.currentMonth;
-                let selectedYear = this.props.currentYear;
-                let selectedAll = {};
-                let oldState = this.state.availability;
-                let newState = {};
-                if(this.state.isMouseDown === 0) {
-                    this.setState({ isMouseDown: 1 });
-                };
-                console.log('mousedown');
-                selectedAll = this.setValueToField([selectedYear, selectedMonth, selectedDate], selectedTime);
-                newState = merge(selectedAll, oldState, {arrayMerge: this.combineMerge});
-                this.setState({
-                    availability: newState
-                });
-
-                e.target.classList.add('selected');
-            });
-
-            element.addEventListener('mouseenter', (e) => {
-                let selectedDate = e.currentTarget.dataset.date;
-                let selectedTime = [e.currentTarget.dataset.time];
-                let selectedMonth = this.props.currentMonth;
-                let selectedYear = this.props.currentYear;
-                let selectedAll = {};
-                let oldState = this.state.availability;
-                let newState = {};
-                if(this.state.isMouseDown === 1) {
-                    console.log('mouseenter');
-                    selectedAll = this.setValueToField([selectedYear, selectedMonth, selectedDate], selectedTime);
-                    newState = merge(selectedAll, oldState, {arrayMerge: this.combineMerge});
-                    this.setState({
-                        availability: newState
-                    });
-                    console.log('availability is ',this.state.availability);
-                    e.target.classList.add('selected');
-                };
-            });
-
-            // element.addEventListener('dragstart', (e) => {
-            //     e.preventDefault();
-            //     e.target.style.backgroundColor = 'red';
-            // });
-
-            // element.addEventListener('dragenter', (e) => {
-            //     e.preventDefault();
-            //     e.target.style.backgroundColor = 'red';
-            // });
-
+    mouseDown = (e) => {
+        let selectedDate = e.currentTarget.dataset.date;
+        let selectedTime = [e.currentTarget.dataset.time];
+        let selectedMonth = this.props.currentMonth;
+        let selectedYear = this.props.currentYear;
+        let selectedAll = {};
+        let oldState = this.state.availability;
+        let newState = {};
+        if(this.state.isMouseDown === 0) {
+            this.setState({ isMouseDown: 1 });
+        };
+        console.log('mousedown');
+        selectedAll = this.setValueToField([selectedYear, selectedMonth, selectedDate], selectedTime);
+        newState = merge(selectedAll, oldState, {arrayMerge: this.combineMerge});
+        this.setState({
+            availability: newState
         });
+        e.target.classList.add('selected');
+    }
 
-        document.addEventListener('mouseup', () => {
+    mouseEnter = (e) => {
+        let selectedDate = e.currentTarget.dataset.date;
+        let selectedTime = [e.currentTarget.dataset.time];
+        let selectedMonth = this.props.currentMonth;
+        let selectedYear = this.props.currentYear;
+        let selectedAll = {};
+        let oldState = this.state.availability;
+        let newState = {};
+        if(this.state.isMouseDown === 1) {
+            console.log('mouseenter');
+            selectedAll = this.setValueToField([selectedYear, selectedMonth, selectedDate], selectedTime);
+            newState = merge(selectedAll, oldState, {arrayMerge: this.combineMerge});
             this.setState({
-                isMouseDown: 0
+                availability: newState
             });
-        });
+            console.log('availability is ',this.state.availability);
+            e.target.classList.add('selected');
+        };
+    }
 
-        
+    attachEvents = () => {
+        document.addEventListener('mouseup', () => {
+            if (this.state.isMouseDown === 1) {
+                this.setState({
+                    isMouseDown: 0
+                });
+            }
+            
+        });
     }
 
     // https://stackoverflow.com/questions/5484673/javascript-how-to-dynamically-create-nested-objects-using-object-names-given-by/48751698
@@ -165,9 +157,24 @@ class Week extends React.Component {
         return destination;
     }
 
+    reset = () => {
+        let slots = document.getElementsByClassName('week-times');
+
+        Array.from(slots).forEach((slot) => {
+            slot.classList.remove('selected');
+        });
+
+        this.setState({
+            availability: {}
+        });
+
+        console.log(this.state);
+    }
     
 
     render() {
+        console.log('week render');
+        this.createdWeek = this.createWeek();
         return (
             <div id='container-week'> 
                <table id="week">
@@ -178,7 +185,7 @@ class Week extends React.Component {
                             </th>
                         </tr>
                     </thead>
-                    <tbody id='copy'>
+                    <tbody id='week-body'>
                         <tr colSpan='8'>
                             <td>
                             </td>
@@ -189,6 +196,7 @@ class Week extends React.Component {
                         
                     </tbody>
                </table>
+               <button id='reset' onClick={this.reset}>Reset</button>
                <button id='submit'>Submit</button>
             </div>
         )
@@ -201,18 +209,18 @@ const mapStateToProps = (state) => {
     return state.calendar;
 };
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        storeCurrentWeekToState: (week) => {
-            console.log('storeCurrentWeekToState');
-            dispatch(storeCurrentWeek(week));
-        }
-    }
-};
+// const mapDispatchToProps = (dispatch) => {
+//     return {
+//         storeCurrentWeekToState: (week) => {
+//             console.log('storeCurrentWeekToState');
+//             dispatch(storeCurrentWeek(week));
+//         }
+//     }
+// };
 
 
 // export default withRouter(Week);
 // export default React.forwardRef((props,ref) => <Week {...props} ref={ref} />);
 
-const Container = connect(mapStateToProps, mapDispatchToProps)(Week);
+const Container = connect(mapStateToProps)(Week);
 export default Container;
