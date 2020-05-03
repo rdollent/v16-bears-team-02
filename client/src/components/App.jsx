@@ -5,7 +5,7 @@ import Home from './Home';
 import Planner from './Planner';
 import {connect} from 'react-redux';
 
-function AppContainer() {
+const AppContainer = () => {
   return (
     <Router>
           <Switch>
