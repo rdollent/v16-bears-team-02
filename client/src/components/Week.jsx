@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {connect} from 'react-redux';
 import { withRouter } from 'react-router-dom';
 // import { storeCurrentWeek } from '../actions/calendarActions';
-import { getCurrentMonth, getCurrentYear, getCurrentDate, getFirstDay, getLastFullDate, getNumberOfWeeks, createWeek, populateDays } from './Functions';
+import { createWeek, populateDays } from './Functions';
 const merge = require('deepmerge');
 
 const Week = (props) => {
@@ -12,6 +12,8 @@ const Week = (props) => {
 
     const createdWeek = createWeek(props);
 
+    // refs are for event listeners
+    // https://medium.com/geographit/accessing-react-state-in-event-listeners-with-usestate-and-useref-hooks-8cceee73c559
     const isMouseDownRef = useRef(isMouseDown);
     const setIsMouseDownRef = data => {
         isMouseDownRef.current = data;
@@ -68,8 +70,8 @@ const Week = (props) => {
                         {   className:'week-times', 
                             'data-date': l, 
                             'data-time': t,
-                            onMouseDown:  mouseDown,
-                            onMouseEnter: mouseEnter,
+                            onMouseDown:  (e) => { pickTime(e, 'mousedown') },
+                            onMouseEnter: (e) =>  { pickTime(e, 'mouseenter') },
                             key: `${props.currentMonth}-${l}-${t}-${ind}` //added ${ind} to fix blank dates/t keys having the same key
                         }
                         , 
@@ -77,13 +79,14 @@ const Week = (props) => {
                         ''
                         ))
                 ]
-                );
+            );
         });
         return timeSlots;
     }
 
-    const mouseDown = 
-        (e) => {
+
+
+    const pickTime = (e, eventName) => {
         e.stopPropagation();
         let selectedDate = e.currentTarget.dataset.date;
         let selectedTime = [e.currentTarget.dataset.time];
@@ -92,39 +95,32 @@ const Week = (props) => {
         let selectedAll = {};
         let oldState = availabilityRef.current;
         let newState = {};
-        
-        if(isMouseDownRef.current === 0) {
-            setIsMouseDownRef(1);
-        };
-        console.log('mousedown');
-        selectedAll = setValueToField([selectedYear, selectedMonth, selectedDate], selectedTime);
-        console.log(oldState, selectedAll);
-        newState = merge(selectedAll, oldState, {arrayMerge: combineMerge});
-        console.log('newState', newState);
-        setAvailRef(newState);
-        e.target.classList.add('selected');
-    };
 
+        if(
+            (
+                eventName === 'mousedown' 
+                || 
+                (   
+                    eventName === 'mouseenter' 
+                    && 
+                    isMouseDownRef.current === 1
+                )
+            )
+            &&
+            e.target.dataset.date !== ''
+        )  
+        {
+            if(isMouseDownRef.current === 0) {
+                setIsMouseDownRef(1);
+            };
 
-
-    const mouseEnter = (e) => {
-        e.stopPropagation();
-        let selectedDate = e.currentTarget.dataset.date;
-        let selectedTime = [e.currentTarget.dataset.time];
-        let selectedMonth = props.currentMonth;
-        let selectedYear = props.currentYear;
-        let selectedAll = {};
-        let oldState = availabilityRef.current;
-        let newState = {};
-        if(isMouseDownRef.current === 1) {
-            console.log('mouseenter');
             selectedAll = setValueToField([selectedYear, selectedMonth, selectedDate], selectedTime);
             newState = merge(selectedAll, oldState, {arrayMerge: combineMerge});
+            console.log('newState', newState);
             setAvailRef(newState);
-            console.log('availability is ', availabilityRef.current);
             e.target.classList.add('selected');
-        };
-    };
+        }
+    }
 
     const attachEvents = () => {
         document.addEventListener('mouseup', () => {
@@ -141,7 +137,6 @@ const Week = (props) => {
         let result = fields.reduceRight(reducer, {});
         return result;
     };
-
 
     const combineMerge = (target, source, options) => {
         const destination = target.slice();
