@@ -4,23 +4,10 @@ import ReactDOM from 'react-dom';
 import {connect} from 'react-redux';
 import { storeCurrentMonth, storeCurrentYear, storeCurrentDate, storeCurrentWeek } from '../actions/calendarActions';
 
-import { getCurrentMonth, getCurrentYear, getCurrentDate, 
-    // getFirstDay, 
-    // getLastFullDate, 
-    // getNumberOfWeeks,
-     createWeek, populateDays } from './Functions';
+import { getCurrentMonth, getCurrentYear, getCurrentDate, createWeek, populateDays } from './Functions';
 
 
 const Calendar = (props) => {
-
-    // this.getCurrentMonth = getCurrentMonth.bind(this);
-    // this.getCurrentYear = getCurrentYear.bind(this);
-    // this.getCurrentDate = getCurrentDate.bind(this);
-    // this.getFirstDay = getFirstDay.bind(this);
-    // this.getLastFullDate = getLastFullDate.bind(this);
-    // this.getNumberOfWeeks = getNumberOfWeeks.bind(this);
-    // this.populateDays = populateDays.bind(this);
-    // this.createWeek = createWeek.bind(this);
     const months = [
         'January', 'February', 'March', 'April',
         'May', 'June', 'July', 'August', 'September',

@@ -75,7 +75,6 @@ const Week = (props) => {
                             key: `${props.currentMonth}-${l}-${t}-${ind}` //added ${ind} to fix blank dates/t keys having the same key
                         }
                         , 
-                        // React.createElement('span', {}, '')
                         ''
                         ))
                 ]
@@ -114,11 +113,21 @@ const Week = (props) => {
                 setIsMouseDownRef(1);
             };
 
-            selectedAll = setValueToField([selectedYear, selectedMonth, selectedDate], selectedTime);
-            newState = merge(selectedAll, oldState, {arrayMerge: combineMerge});
-            console.log('newState', newState);
-            setAvailRef(newState);
-            e.target.classList.add('selected');
+            if(e.target.classList.contains('selected') === false) {
+                selectedAll = setValueToField([selectedYear, selectedMonth, selectedDate], selectedTime);
+                newState = merge(selectedAll, oldState, {arrayMerge: combineMerge});
+                setAvailRef(newState);
+                e.target.classList.add('selected');
+            } else {
+                // look for index of target
+                let ind = oldState[selectedYear][selectedMonth][selectedDate].findIndex(elem => elem === selectedTime);
+                // remove it from oldState
+                // value by reference, so oldState changes
+                oldState[selectedYear][selectedMonth][selectedDate].splice(ind, 1);
+                setAvailRef(oldState);
+                e.target.classList.remove('selected');
+            }
+            
         }
     }
 
