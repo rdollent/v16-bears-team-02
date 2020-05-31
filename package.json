@@ -1,0 +1,24 @@
+{
+  "name": "lets-meet-app",
+  "version": "1.0.0",
+  "description": "meeting web app",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "npm run start --prefix server",
+    "client": "npm run start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rdollent/v16-bears-team-02.git"
+  },
+  "author": "rdollent",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rdollent/v16-bears-team-02/issues"
+  },
+  "homepage": "https://github.com/rdollent/v16-bears-team-02#readme",
+  "dependencies": {
+    "concurrently": "^5.2.0"
+  }
+}
